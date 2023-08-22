@@ -3,18 +3,16 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, ... }:
-
-let
-  unstableTarball =
-    fetchTarball "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz";
-  home-manager = 
-    fetchTarball "https://github.com/nix-community/home-manager/archive/master.tar.gz";
-in
+# Enable to use home manager
+# let
+#   home-manager = fetchTarball "https://github.com/nix-community/home-manager/archive/master.tar.gz";
+# in
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      (import "${home-manager}/nixos")
+      # Enable to use home manager
+      # (import "${home-manager}/nixos")
     ];
 
   # Bootloader.
@@ -53,24 +51,22 @@ in
     LC_TIME = "it_IT.UTF-8";
   };
 
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-
-  # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.sddm = {
-    enable = true;
-    autoNumlock = true;
-    autoLogin = {
-        enable = true;
-        user = "nick";
-    };
-  };
-  
-  services.xserver.desktopManager.plasma5.enable = true;
-
-  # Configure keymap in X11
+  # Configure X11
   services.xserver = {
-    layout = "us";
+    enable = true;
+    
+    displayManager = {
+      sddm = {
+        enable = true;
+        autoNumlock = true;
+      };
+      # autoLogin = {
+      #     enable = true;
+      #     user = "nick";
+      # };
+    };
+    # Set Layout And Variant
+    layout = "us,it";
     xkbVariant = "";
   };
 
@@ -115,8 +111,12 @@ in
 
   services.flatpak.enable = true;
 
-  # Allow unfree packages
-  nixpkgs.config = {
+
+  nixpkgs.config = 
+  let unstableTarball =
+    fetchTarball "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz";
+    in {
+    # Allow unfree packages
     allowUnfree = true;
     packageOverrides = pkgs: {
       unstable = import unstableTarball {
@@ -124,7 +124,7 @@ in
       };
     };
   };
-
+    
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -139,6 +139,7 @@ in
     lutris
     neofetch
     neovim
+    qemu
     steam
     thunderbird
     tldr
@@ -162,6 +163,14 @@ in
   # List services that you want to enable:
 
   # Enable Plex Media Server
+
+  xdg.portal = {
+    enable = true;
+    # wlr.enable = true;
+    # gtk portal needed to make gtk apps happy
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+  };
+
   services.plex.enable = true;
 
   # Enable Remote Desktop Protocol
