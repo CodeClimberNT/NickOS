@@ -3,27 +3,63 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, ... }:
-# Enable to use home manager
-# let
-#   home-manager = fetchTarball "https://github.com/nix-community/home-manager/archive/master.tar.gz";
-# in
+
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      # Enable to use home manager
-      # (import "${home-manager}/nixos")
     ];
 
   # Bootloader.
-  boot.loader.grub = {
-    enable = true;
-    device = "/dev/sda";
-    useOSProber = true;
+  boot.loader = {
+    efi = {
+      canTouchEfiVariables = true;
+      efiSysMountPoint = "/boot";
+    };
+    grub = {
+      enable = true;
+      device = "nodev";
+      useOSProber = true;
+      efiSupport = true;
+    };
   };
 
 
-  networking.hostName = "nixos-desktop"; # Define your hostname.
+services.power-profiles-daemon.enable = false;
+    # boot.kernelPackages = pkgs.linuxPackages_latest;
+    # boot.kernelParams = ["intel_pstate=disable"];
+    services.tlp = {
+      enable = true;
+      settings = {
+        START_CHARGE_THRESH_BAT0=75;
+        STOP_CHARGE_THRESH_BAT0=80;
+      };
+      #   CPU_SCALING_GOVERNOR_ON_AC=schedutil
+      #   CPU_SCALING_GOVERNOR_ON_BAT=schedutil
+
+      #   CPU_SCALING_MIN_FREQ_ON_AC=800000
+      #   CPU_SCALING_MAX_FREQ_ON_AC=3500000
+      #   CPU_SCALING_MIN_FREQ_ON_BAT=800000
+      #   CPU_SCALING_MAX_FREQ_ON_BAT=2300000
+
+      #   # Enable audio power saving for Intel HDA, AC97 devices (timeout in secs).
+      #   # A value of 0 disables, >=1 enables power saving (recommended: 1).
+      #   # Default: 0 (AC), 1 (BAT)
+      #   SOUND_POWER_SAVE_ON_AC=0
+      #   SOUND_POWER_SAVE_ON_BAT=1
+
+      #   # Runtime Power Management for PCI(e) bus devices: on=disable, auto=enable.
+      #   # Default: on (AC), auto (BAT)
+      #   RUNTIME_PM_ON_AC=on
+      #   RUNTIME_PM_ON_BAT=auto
+
+      #   # Battery feature drivers: 0=disable, 1=enable
+      #   # Default: 1 (all)
+      #   NATACPI_ENABLE=1
+      #   TPACPI_ENABLE=1
+      #   TPSMAPI_ENABLE=1
+    };
+  networking.hostName = "nixos-laptop-nick"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -51,25 +87,20 @@
     LC_TIME = "it_IT.UTF-8";
   };
 
-  # Configure X11
+  # Enable the X11 windowing system.
+  services.xserver.enable = true;
+
+  # Enable the GNOME Desktop Environment.
+  services.xserver.displayManager.gdm.enable = true;
+  services.xserver.desktopManager.gnome.enable = true;
+
   services.xserver = {
-    enable = true;
-    
-    displayManager = {
-      sddm = {
-        enable = true;
-        autoNumlock = true;
-      };
-      # autoLogin = {
-      #     enable = true;
-      #     user = "nick";
-      # };
-    };
-    # Set Layout And Variant
     layout = "us,it";
     xkbVariant = "";
   };
 
+  # Enable CUPS to print documents.
+  services.printing.enable = true;
 
   # Enable sound with pipewire.
   sound.enable = true;
@@ -95,23 +126,12 @@
   users.users.nick = {
     isNormalUser = true;
     description = "Nick";
-    extraGroups = [ "networkmanager" "wheel" "kvm" "input" "disk" "libvirtd" ];
-    packages = with pkgs; [    ];
+    extraGroups = [ "networkmanager" "wheel" ];
+    packages = with pkgs; [ ];
   };
-  
-  
-  # Home Manager example (insert non system package)
-  # 
-  # home-manager.users.nick = { pkgs, ... }: {
-  #     home.stateVersion = "23.05";
-  #     home.packages = with pkg; [  
-  #       htop
-  #     ];
-  # };
 
   services.flatpak.enable = true;
-
-
+  
   nixpkgs.config = 
   let unstableTarball =
     fetchTarball "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz";
@@ -124,7 +144,7 @@
       };
     };
   };
-    
+  
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -132,15 +152,19 @@
     authy
     autojump
     brave
+    efibootmgr
     flatpak
     gh
+    gparted
     htop
     kitty
+    libsForQt5.kdeconnect-kde
     lutris
     neofetch
     neovim
     qemu
     steam
+    telegram-desktop
     thunderbird
     tldr
     trashy
@@ -162,32 +186,23 @@
 
   # List services that you want to enable:
 
-  # Enable Plex Media Server
-
-  xdg.portal = {
-    enable = true;
-    # wlr.enable = true;
-    # gtk portal needed to make gtk apps happy
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-  };
-
-  services.plex.enable = true;
-
-  # Enable Remote Desktop Protocol
-  services.xrdp = {
-    enable = true;
-    openFirewall = true;
-  };
-
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
+  # Enable the OpenSSH daemon.
+  # services.openssh.enable = true;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
-
+networking.firewall = { 
+    enable = true;
+    allowedTCPPortRanges = [ 
+      { from = 1714; to = 1764; } # KDE Connect
+    ];  
+    allowedUDPPortRanges = [ 
+      { from = 1714; to = 1764; } # KDE Connect
+    ];  
+  };  
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
@@ -213,5 +228,4 @@
     options = "--delete-older-than 7d";
   };
 
-  
 }
