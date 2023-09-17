@@ -28,3 +28,5 @@ Got the time to try it again... it didn't ended, let's say, *perfect*: i wanted 
 Initially everything worked great with a slight *tm* issue: the boot partition made by windows was too small so now i can't make any new build, and to make the matter worse with the last windows update it self destroyed: I'm unable to access windows operating system from the grub entry. I though it has something to do to with the update that maybe broken the grub mount point to windows, but i'm unable to access it also by the bios, making me realising now that i'm writing this that it could have been the limited boot partition size (oppsie).<br>
 Now I made up my mind: full switch to nixos, at least for now. I wanted the windows safety net to avoid any problem with broken linux installation, but i got only more problems. I want to try the full linux experience and see where it will take me. The plus side is that, since I'm starting a new study in engineering nixos will be my best best for the os both for stability and reproducibility.<br>
 I will keep you posted. 
+P.S.<br>
+All this happens weeks ago, but I had no time to update during the windows disaster.
