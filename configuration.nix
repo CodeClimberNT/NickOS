@@ -359,7 +359,7 @@ in
     stateVersion = "23.05"; # Did you read the comment?
 
     autoUpgrade = {
-      allowReboot = true;
+      allowReboot = false;
       channel = "https://nixos.org/channels/nixos-23.05";
       enable = true;
       dates = "daily";
