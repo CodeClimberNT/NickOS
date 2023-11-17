@@ -41,38 +41,44 @@ in
 
   services.power-profiles-daemon.enable = false;
   # boot.kernelPackages = pkgs.linuxPackages_latest;
-  services.tlp = {
-    enable = true;
-    settings = {
-      START_CHARGE_THRESH_BAT0=55;
-      STOP_CHARGE_THRESH_BAT0=60;
+  services={
+    tlp = {
+      enable = true;
+      settings = {
+        START_CHARGE_THRESH_BAT0=60;
+        STOP_CHARGE_THRESH_BAT0=70;
+      
+      #   CPU_SCALING_GOVERNOR_ON_AC=schedutil
+      #   CPU_SCALING_GOVERNOR_ON_BAT=schedutil
+
+      #   CPU_SCALING_MIN_FREQ_ON_AC=800000
+      #   CPU_SCALING_MAX_FREQ_ON_AC=3500000
+      #   CPU_SCALING_MIN_FREQ_ON_BAT=800000
+      #   CPU_SCALING_MAX_FREQ_ON_BAT=2300000
+
+      #   # Enable audio power saving for Intel HDA, AC97 devices (timeout in secs).
+      #   # A value of 0 disables, >=1 enables power saving (recommended: 1).
+      #   # Default: 0 (AC), 1 (BAT)
+      #   SOUND_POWER_SAVE_ON_AC=0
+      #   SOUND_POWER_SAVE_ON_BAT=1
+
+      #   # Runtime Power Management for PCI(e) bus devices: on=disable, auto=enable.
+      #   # Default: on (AC), auto (BAT)
+      #   RUNTIME_PM_ON_AC=on
+      #   RUNTIME_PM_ON_BAT=auto
+
+      #   # Battery feature drivers: 0=disable, 1=enable
+      #   # Default: 1 (all)
+      #   NATACPI_ENABLE=1
+      #   TPACPI_ENABLE=1
+      #   TPSMAPI_ENABLE=1
+      };
     };
-    #   CPU_SCALING_GOVERNOR_ON_AC=schedutil
-    #   CPU_SCALING_GOVERNOR_ON_BAT=schedutil
 
-    #   CPU_SCALING_MIN_FREQ_ON_AC=800000
-    #   CPU_SCALING_MAX_FREQ_ON_AC=3500000
-    #   CPU_SCALING_MIN_FREQ_ON_BAT=800000
-    #   CPU_SCALING_MAX_FREQ_ON_BAT=2300000
-
-    #   # Enable audio power saving for Intel HDA, AC97 devices (timeout in secs).
-    #   # A value of 0 disables, >=1 enables power saving (recommended: 1).
-    #   # Default: 0 (AC), 1 (BAT)
-    #   SOUND_POWER_SAVE_ON_AC=0
-    #   SOUND_POWER_SAVE_ON_BAT=1
-
-    #   # Runtime Power Management for PCI(e) bus devices: on=disable, auto=enable.
-    #   # Default: on (AC), auto (BAT)
-    #   RUNTIME_PM_ON_AC=on
-    #   RUNTIME_PM_ON_BAT=auto
-
-    #   # Battery feature drivers: 0=disable, 1=enable
-    #   # Default: 1 (all)
-    #   NATACPI_ENABLE=1
-    #   TPACPI_ENABLE=1
-    #   TPSMAPI_ENABLE=1
+    auto-cpufreq = {
+      enable = true;
+    };
   };
-
 
   networking.hostName = "nixos-laptop-nick"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -208,7 +214,7 @@ in
       description = "Nick";
       extraGroups = [ "networkmanager" "wheel" ];
       packages = with pkgs; [ ];
-      shell = pkgs.zsh;
+      # shell = pkgs.zsh;
   };
   
   
@@ -244,13 +250,18 @@ in
     authy
     autojump
     bat
-    brave
+    # brave
     efibootmgr
+    firefox
     flatpak
     gh
     git
     gparted
     htop
+    jdk8
+
+    # jetbrains.idea-ultimate
+
     kitty
     libsForQt5.kate
     libsForQt5.kdeconnect-kde
@@ -261,6 +272,7 @@ in
     neovim
     obs-studio
     oh-my-zsh
+    python311
     qemu
     remmina
     steam
@@ -275,9 +287,12 @@ in
     xfce.thunar-volman
     wget
     zsh
+    
+    # virtual manager
+    virt-manager
 
     # Unstable Channel
-    vscode
+    unstable.vscode
 
     # Linux Packages
     linuxPackages.nvidia_x11
@@ -286,17 +301,50 @@ in
     nvidia-offload
   ];
 
-
+  virtualisation.libvirtd.enable = true;
+  
   # Home Manager example (insert non system package)
-   
+  # home-manager.useGlobalPkgs = true;
   # home-manager.users.nick = { lib, pkgs, ... }: {
   #     home.stateVersion = "23.05";
 
-  #     home.packages = with pkg; [ ];
+  #     # home.packages = with pkgs; [ 
+  #     #     zsh
+  #     #     zsh-powerlevel10k
+  #     # ];
+  #     dconf.settings = {
+  #       "org/virt-manager/virt-manager/connections" = {
+  #         autoconnect = ["qemu:///system"];
+  #         uris = ["qemu:///system"];
+  #       };
+  #     };
+
+  #     #     zsh = {
+  #     # enable = true;
+
+  #     # ohMyZsh = {
+  #     #   enable = true;
+  #     #   # theme = "powerlevel10k";
+  #     # };
+  #     plugins = [
+  #       {
+  #         name = "powerlevel10k";
+  #         src = pkgs.zsh-powerlevel10k;
+  #         file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
+  #       }
+  #       {
+  #         name = "powerlevel10k-config";
+  #         src = ./p10k-config;
+  #         file = "p10k.zsh";
+  #       }
+  #     ];
+    
   # };
 
   programs = { 
-    dconf.enable = true;
+    dconf = {
+      enable = true;
+    };
 
     steam = {
       enable = true;
@@ -316,6 +364,18 @@ in
         enable = true;
         # theme = "powerlevel10k";
       };
+      # plugins = [
+      #   {
+      #     name = "powerlevel10k";
+      #     src = pkgs.zsh-powerlevel10k;
+      #     file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
+      #   }
+      #   {
+      #     name = "powerlevel10k-config";
+      #     src = ./p10k-config;
+      #     file = "p10k.zsh";
+      #   }
+      # ];
     };
  
     # Some programs need SUID wrappers, can be configured further or are
