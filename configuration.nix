@@ -110,7 +110,7 @@ in
     LC_TIME = "it_IT.UTF-8";
   };
 
-# hardware for nvidia
+  # hardware for nvidia
   hardware = {
     nvidia = {
       prime = {
@@ -175,6 +175,7 @@ in
 
     displayManager = {
       sddm.enable = true;
+      sddm.autoNumlock = true;
       defaultSession = "plasma";
     };
   };
