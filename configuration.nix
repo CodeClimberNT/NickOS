@@ -300,7 +300,7 @@ in
       virt-manager
 
       # Unstable Channel
-      vscode
+      unstable.vscode
       unstable.jetbrains.idea-ultimate
 
       # Linux Packages
@@ -406,27 +406,27 @@ in
 
 
   # Open ports in the firewall.
-  networking ={
+  networking = {
     hostName = "nixos-laptop-nick"; # Define your hostname.
 
-  firewall = {
-    enable = true;
-    allowedTCPPortRanges = [
-      { from = 1714; to = 1764; } # KDE Connect
-    ];
-    allowedUDPPortRanges = [
-      { from = 1714; to = 1764; } # KDE Connect
-    ];
-  };
-#   wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  # Configure network proxy if necessary
-  # proxy.default = "http://user:password@proxy:port/";
-  # proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Enable networking
-  networkmanager.enable = true;
+    firewall = {
+      enable = true;
+      allowedTCPPortRanges = [
+        { from = 1714; to = 1764; } # KDE Connect
+      ];
+      allowedUDPPortRanges = [
+        { from = 1714; to = 1764; } # KDE Connect
+      ];
     };
+    #   wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+
+    # Configure network proxy if necessary
+    # proxy.default = "http://user:password@proxy:port/";
+    # proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+
+    # Enable networking
+    networkmanager.enable = true;
+  };
 
 
   # This value determines the NixOS release from which the default
