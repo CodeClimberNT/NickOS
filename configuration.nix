@@ -10,7 +10,8 @@ let
 in
 {
   imports =
-    [ # Include the results of the hardware scan.
+    [
+      # Include the results of the hardware scan.
       ./hardware-configuration.nix
       # Enable to use home manager
       (import "${home-manager}/nixos")
@@ -41,37 +42,37 @@ in
 
   services.power-profiles-daemon.enable = false;
   # boot.kernelPackages = pkgs.linuxPackages_latest;
-  services={
+  services = {
     tlp = {
       enable = true;
       settings = {
-        START_CHARGE_THRESH_BAT0=60;
-        STOP_CHARGE_THRESH_BAT0=70;
-      
-      #   CPU_SCALING_GOVERNOR_ON_AC=schedutil
-      #   CPU_SCALING_GOVERNOR_ON_BAT=schedutil
+        START_CHARGE_THRESH_BAT0 = 60;
+        STOP_CHARGE_THRESH_BAT0 = 70;
 
-      #   CPU_SCALING_MIN_FREQ_ON_AC=800000
-      #   CPU_SCALING_MAX_FREQ_ON_AC=3500000
-      #   CPU_SCALING_MIN_FREQ_ON_BAT=800000
-      #   CPU_SCALING_MAX_FREQ_ON_BAT=2300000
+        #   CPU_SCALING_GOVERNOR_ON_AC=schedutil
+        #   CPU_SCALING_GOVERNOR_ON_BAT=schedutil
 
-      #   # Enable audio power saving for Intel HDA, AC97 devices (timeout in secs).
-      #   # A value of 0 disables, >=1 enables power saving (recommended: 1).
-      #   # Default: 0 (AC), 1 (BAT)
-      #   SOUND_POWER_SAVE_ON_AC=0
-      #   SOUND_POWER_SAVE_ON_BAT=1
+        #   CPU_SCALING_MIN_FREQ_ON_AC=800000
+        #   CPU_SCALING_MAX_FREQ_ON_AC=3500000
+        #   CPU_SCALING_MIN_FREQ_ON_BAT=800000
+        #   CPU_SCALING_MAX_FREQ_ON_BAT=2300000
 
-      #   # Runtime Power Management for PCI(e) bus devices: on=disable, auto=enable.
-      #   # Default: on (AC), auto (BAT)
-      #   RUNTIME_PM_ON_AC=on
-      #   RUNTIME_PM_ON_BAT=auto
+        #   # Enable audio power saving for Intel HDA, AC97 devices (timeout in secs).
+        #   # A value of 0 disables, >=1 enables power saving (recommended: 1).
+        #   # Default: 0 (AC), 1 (BAT)
+        #   SOUND_POWER_SAVE_ON_AC=0
+        #   SOUND_POWER_SAVE_ON_BAT=1
 
-      #   # Battery feature drivers: 0=disable, 1=enable
-      #   # Default: 1 (all)
-      #   NATACPI_ENABLE=1
-      #   TPACPI_ENABLE=1
-      #   TPSMAPI_ENABLE=1
+        #   # Runtime Power Management for PCI(e) bus devices: on=disable, auto=enable.
+        #   # Default: on (AC), auto (BAT)
+        #   RUNTIME_PM_ON_AC=on
+        #   RUNTIME_PM_ON_BAT=auto
+
+        #   # Battery feature drivers: 0=disable, 1=enable
+        #   # Default: 1 (all)
+        #   NATACPI_ENABLE=1
+        #   TPACPI_ENABLE=1
+        #   TPSMAPI_ENABLE=1
       };
     };
 
@@ -109,7 +110,7 @@ in
     LC_TIME = "it_IT.UTF-8";
   };
 
-
+# hardware for nvidia
   hardware = {
     nvidia = {
       prime = {
@@ -155,13 +156,17 @@ in
     };
   };
 
+  hardware = {
+    bluetooth.enable = true;
+  };
+
   services.xserver = {
     enable = true;
-    
+
     layout = "us,it";
     xkbVariant = "";
-    
-    videoDrivers = ["nvidia"];
+
+    videoDrivers = [ "nvidia" ];
 
     # Enable Plasma5 Desktop Environment
     desktopManager = {
@@ -210,99 +215,106 @@ in
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.nick = {
-      isNormalUser = true;
-      description = "Nick";
-      extraGroups = [ "networkmanager" "wheel" ];
-      packages = with pkgs; [ ];
-      # shell = pkgs.zsh;
+    isNormalUser = true;
+    description = "Nick";
+    extraGroups = [ "networkmanager" "wheel" ];
+    packages = with pkgs; [ ];
+    # shell = pkgs.zsh;
   };
-  
-  
-  
+
+
+
 
   services.flatpak.enable = true;
 
-  nixpkgs.config = 
-  let unstableTarball =
-    fetchTarball "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz";
-    in {
-    packageOverrides = pkgs: {
-      unstable = import unstableTarball {
-        config = config.nixpkgs.config;
+  nixpkgs.config =
+    let
+      unstableTarball =
+        fetchTarball "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz";
+    in
+    {
+      packageOverrides = pkgs: {
+        unstable = import unstableTarball {
+          config = config.nixpkgs.config;
+        };
       };
+
+      allowUnfree = true;
     };
-    
-    allowUnfree = true;
-  };
-  
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages = with pkgs; 
-    let nvidia-offload = writeShellScriptBin "nvidia-offload" ''
-      export __NV_PRIME_RENDER_OFFLOAD=1
-      export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
-      export __GLX_VENDOR_LIBRARY_NAME=nvidia
-      export __VK_LAYER_NV_optimus=NVIDIA_only
+  environment.systemPackages = with pkgs;
+    let
+      nvidia-offload = writeShellScriptBin "nvidia-offload" ''
+        export __NV_PRIME_RENDER_OFFLOAD=1
+        export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
+        export __GLX_VENDOR_LIBRARY_NAME=nvidia
+        export __VK_LAYER_NV_optimus=NVIDIA_only
 
-      exec "$@"
-      '';   in[
-    # Stable Channel
-    authy
-    autojump
-    bat
-    # brave
-    efibootmgr
-    firefox
-    flatpak
-    gh
-    git
-    gparted
-    htop
-    jdk8
+        exec "$@"
+      '';
+    in
+    [
+      # Stable Channel
+      authy
+      autojump
+      bat
+      # brave
+      efibootmgr
+      firefox
+      flatpak
+      gh
+      git
+      gparted
+      htop
+      jdk8
 
-    # jetbrains.idea-ultimate
+      # jetbrains.idea-ultimate
 
-    kitty
-    libsForQt5.kate
-    libsForQt5.kdeconnect-kde
-    libreoffice-qt
-    lutris
-    lshw
-    neofetch
-    neovim
-    obs-studio
-    oh-my-zsh
-    python311
-    qemu
-    remmina
-    steam
-    telegram-desktop
-    thunderbird
-    tldr
-    toybox
-    trashy
-    vim
-    xfce.thunar
-    xfce.thunar-archive-plugin
-    xfce.thunar-volman
-    wget
-    zsh
-    
-    # virtual manager
-    virt-manager
+      kitty
+      libsForQt5.kate
+      libsForQt5.kdeconnect-kde
+      libreoffice-qt
+      lutris
+      lshw
+      neofetch
+      neovim
+      nixpkgs-fmt
+      obs-studio
+      oh-my-zsh
+      python311
+      qemu
+      remmina
+      steam
+      telegram-desktop
+      thunderbird
+      tldr
+      toybox
+      trashy
+      vim
+      xfce.thunar
+      xfce.thunar-archive-plugin
+      xfce.thunar-volman
+      wget
+      zsh
+      zoom-us
 
-    # Unstable Channel
-    unstable.vscode
+      # virtual manager
+      virt-manager
 
-    # Linux Packages
-    linuxPackages.nvidia_x11
+      # Unstable Channel
+      unstable.vscode
 
-    # Nvidia offload
-    nvidia-offload
-  ];
+      # Linux Packages
+      linuxPackages.nvidia_x11
+
+      # Nvidia offload
+      nvidia-offload
+    ];
 
   virtualisation.libvirtd.enable = true;
-  
+
   # Home Manager example (insert non system package)
   # home-manager.useGlobalPkgs = true;
   # home-manager.users.nick = { lib, pkgs, ... }: {
@@ -338,10 +350,10 @@ in
   #         file = "p10k.zsh";
   #       }
   #     ];
-    
+
   # };
 
-  programs = { 
+  programs = {
     dconf = {
       enable = true;
     };
@@ -349,13 +361,13 @@ in
     steam = {
       enable = true;
       # Open ports in the firewall for Steam Remote Play
-      remotePlay.openFirewall = true; 
+      remotePlay.openFirewall = true;
 
       # Open ports in the firewall for Source Dedicated Server
-      dedicatedServer.openFirewall = true; 
+      dedicatedServer.openFirewall = true;
     };
 
-#     xwayland.enable = true;
+    #     xwayland.enable = true;
 
     zsh = {
       enable = true;
@@ -377,7 +389,10 @@ in
       #   }
       # ];
     };
- 
+
+    direnv.enable = true;
+
+
     # Some programs need SUID wrappers, can be configured further or are
     # started in user sessions.
     # mtr.enable = true;
@@ -395,15 +410,15 @@ in
 
 
   # Open ports in the firewall.
-  networking.firewall = { 
+  networking.firewall = {
     enable = true;
-    allowedTCPPortRanges = [ 
+    allowedTCPPortRanges = [
       { from = 1714; to = 1764; } # KDE Connect
-    ];  
-    allowedUDPPortRanges = [ 
+    ];
+    allowedUDPPortRanges = [
       { from = 1714; to = 1764; } # KDE Connect
-    ];  
-  };  
+    ];
+  };
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
@@ -414,7 +429,7 @@ in
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system={
+  system = {
     # Do Not Change
     stateVersion = "23.05"; # Did you read the comment?
 
@@ -427,7 +442,7 @@ in
   };
 
   # Garbage Collector
-  nix.gc= {
+  nix.gc = {
     automatic = true;
     dates = "weekly";
     options = "--delete-older-than 7d";
