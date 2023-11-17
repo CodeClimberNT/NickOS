@@ -81,15 +81,7 @@ in
     };
   };
 
-  networking.hostName = "nixos-laptop-nick"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Enable networking
-  networking.networkmanager.enable = true;
 
 
   # Set your time zone.
@@ -276,7 +268,6 @@ in
       htop
       jdk8
 
-      jetbrains.idea-ultimate
 
       kitty
       libsForQt5.kate
@@ -309,7 +300,8 @@ in
       virt-manager
 
       # Unstable Channel
-      unstable.vscode
+      vscode
+      unstable.jetbrains.idea-ultimate
 
       # Linux Packages
       linuxPackages.nvidia_x11
@@ -397,7 +389,6 @@ in
 
     direnv.enable = true;
 
-
     # Some programs need SUID wrappers, can be configured further or are
     # started in user sessions.
     # mtr.enable = true;
@@ -415,7 +406,10 @@ in
 
 
   # Open ports in the firewall.
-  networking.firewall = {
+  networking ={
+    hostName = "nixos-laptop-nick"; # Define your hostname.
+
+  firewall = {
     enable = true;
     allowedTCPPortRanges = [
       { from = 1714; to = 1764; } # KDE Connect
@@ -424,8 +418,15 @@ in
       { from = 1714; to = 1764; } # KDE Connect
     ];
   };
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+#   wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+
+  # Configure network proxy if necessary
+  # proxy.default = "http://user:password@proxy:port/";
+  # proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+
+  # Enable networking
+  networkmanager.enable = true;
+    };
 
 
   # This value determines the NixOS release from which the default
