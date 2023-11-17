@@ -300,7 +300,6 @@ in
       xfce.thunar-volman
       wget
       zsh
-      zoom-us
 
       # virtual manager
       virt-manager
