@@ -268,10 +268,11 @@ in
       gh
       git
       gparted
+      gvfs
       htop
       jdk8
 
-      # jetbrains.idea-ultimate
+      jetbrains.idea-ultimate
 
       kitty
       libsForQt5.kate
