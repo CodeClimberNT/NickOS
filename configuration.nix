@@ -172,22 +172,27 @@ in
     };
   };
 
-  environment.plasma5.excludePackages = with pkgs.libsForQt5; [
-    elisa
-    gwenview
-    okular
-    oxygen
-    khelpcenter
-    konsole
-    plasma-browser-integration
-    print-manager
-  ];
+  environment = {
+    plasma5.excludePackages = with pkgs.libsForQt5; [
+      elisa
+      gwenview
+      okular
+      oxygen
+      khelpcenter
+      konsole
+      plasma-browser-integration
+      print-manager
+    ];
+    # enable for wayland
+    # sessionVariables.NIXOS_OZONE_WL = "1";
+  };
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
   # Enable sound with pipewire.
   sound.enable = true;
+
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -236,6 +241,7 @@ in
         };
       };
 
+      pulseaudio = true;
       allowUnfree = true;
     };
 
@@ -266,8 +272,14 @@ in
       gparted
       gvfs
       htop
-      jdk8
 
+      jdk
+      jdk8
+      jdk17
+
+      jetbrains.jdk
+
+      jetbrains-toolbox
 
       kitty
       libsForQt5.kate
@@ -301,7 +313,7 @@ in
 
       # Unstable Channel
       unstable.vscode
-      unstable.jetbrains.idea-ultimate
+      # unstable.jetbrains.idea-ultimate
 
       # Linux Packages
       linuxPackages.nvidia_x11
