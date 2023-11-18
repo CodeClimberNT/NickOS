@@ -36,7 +36,7 @@ in
         useOSProber = true;
         efiSupport = true;
 
-        minegrub-theme.enable = true;
+        # minegrub-theme.enable = true;
 
       };
     };
