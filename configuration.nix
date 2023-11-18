@@ -35,6 +35,9 @@ in
         device = "nodev";
         useOSProber = true;
         efiSupport = true;
+
+        minegrub-theme.enable = true;
+
       };
     };
   };
@@ -312,7 +315,7 @@ in
       virt-manager
 
       # Unstable Channel
-      unstable.vscode
+      vscode
       # unstable.jetbrains.idea-ultimate
 
       # Linux Packages
@@ -460,10 +463,12 @@ in
   };
 
   # Garbage Collector
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 7d";
+  nix = {
+    optimise.automatic = true;
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 7d";
+    };
   };
-
 }
