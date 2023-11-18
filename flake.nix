@@ -8,5 +8,5 @@
         inputs.minegrub.nixosModules.default
       ];
     };
-  }
+  };
 }
