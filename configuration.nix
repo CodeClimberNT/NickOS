@@ -6,7 +6,9 @@
 
 # Enable to use home manager
 let
-  home-manager = fetchTarball "https://github.com/nix-community/home-manager/archive/master.tar.gz";
+  # unstable release
+  # home-manager = fetchTarball "https://github.com/nix-community/home-manager/archive/master.tar.gz";
+  home-manager = fetchTarball "https://github.com/nix-community/home-manager/archive/release-23.05.tar.gz";
 in
 {
   imports =
@@ -186,6 +188,10 @@ in
       plasma-browser-integration
       print-manager
     ];
+
+    # add the zsh package to /etc/shells 
+    # shells = with pkgs; [ zsh ];
+
     # enable for wayland
     # sessionVariables.NIXOS_OZONE_WL = "1";
   };
@@ -223,11 +229,10 @@ in
     isNormalUser = true;
     description = "Nick";
     extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [ ];
     # shell = pkgs.zsh;
   };
 
-
+  # users.defaultUserShell = pkgs.zsh;
 
 
   services.flatpak.enable = true;
@@ -272,6 +277,7 @@ in
       flatpak
       gh
       git
+      gnome.gnome-software
       gparted
       gvfs
       htop
@@ -296,6 +302,7 @@ in
       obs-studio
       oh-my-zsh
       python311
+      python311Packages.pip
       qemu
       remmina
       steam
@@ -310,12 +317,12 @@ in
       xfce.thunar-volman
       wget
       zsh
-
+      zsh-powerlevel10k
       # virtual manager
       virt-manager
 
       # Unstable Channel
-      vscode
+      unstable.vscode
       # unstable.jetbrains.idea-ultimate
 
       # Linux Packages
@@ -328,42 +335,60 @@ in
   virtualisation.libvirtd.enable = true;
 
   # Home Manager example (insert non system package)
-  # home-manager.useGlobalPkgs = true;
-  # home-manager.users.nick = { lib, pkgs, ... }: {
-  #     home.stateVersion = "23.05";
+  home-manager.useGlobalPkgs = true;
 
-  #     # home.packages = with pkgs; [ 
-  #     #     zsh
-  #     #     zsh-powerlevel10k
-  #     # ];
-  #     dconf.settings = {
-  #       "org/virt-manager/virt-manager/connections" = {
-  #         autoconnect = ["qemu:///system"];
-  #         uris = ["qemu:///system"];
-  #       };
-  #     };
+  home-manager.users.nick = { lib, pkgs, ... }: {
 
-  #     #     zsh = {
-  #     # enable = true;
+    fonts.fontconfig.enable = true;
 
-  #     # ohMyZsh = {
-  #     #   enable = true;
-  #     #   # theme = "powerlevel10k";
-  #     # };
-  #     plugins = [
-  #       {
-  #         name = "powerlevel10k";
-  #         src = pkgs.zsh-powerlevel10k;
-  #         file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
-  #       }
-  #       {
-  #         name = "powerlevel10k-config";
-  #         src = ./p10k-config;
-  #         file = "p10k.zsh";
-  #       }
-  #     ];
+    home.stateVersion = "23.05";
 
-  # };
+    home.packages = with pkgs; [
+      zsh
+      zsh-powerlevel10k
+#       nerdfonts.override
+#       { fonts = [ "FiraCode" "DroidSansMono" ]; }
+    ];
+
+
+
+    programs = {
+
+      zsh = {
+        enable = true;
+
+        shellAliases = {
+          ll = "ls -l";
+          update = "sudo nixos-rebuild switch";
+        };
+
+        # histSize = 10000;
+        # histFile = "${config.xdg.dataHome}/zsh/history";
+
+        oh-my-zsh = {
+          enable = true;
+          plugins = [ "git" ];
+          # plugins = [ "git" "thefuck" ];
+          theme = "powerlevel10k";
+        };
+      };
+
+      git = {
+        enable = true;
+        userName = "CodeClimberNT";
+        userEmail = "nicktaormina3@gmail.com";
+      };
+    };
+
+
+    dconf.settings = {
+      "org/virt-manager/virt-manager/connections" = {
+        autoconnect = [ "qemu:///system" ];
+        uris = [ "qemu:///system" ];
+      };
+    };
+
+  };
 
   programs = {
     dconf = {
@@ -381,26 +406,28 @@ in
 
     #     xwayland.enable = true;
 
-    zsh = {
-      enable = true;
+    # zsh.enable = true;
 
-      ohMyZsh = {
-        enable = true;
-        # theme = "powerlevel10k";
-      };
-      # plugins = [
-      #   {
-      #     name = "powerlevel10k";
-      #     src = pkgs.zsh-powerlevel10k;
-      #     file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
-      #   }
-      #   {
-      #     name = "powerlevel10k-config";
-      #     src = ./p10k-config;
-      #     file = "p10k.zsh";
-      #   }
-      # ];
-    };
+    # zsh = {
+    #   enable = true;
+
+    #   ohMyZsh = {
+    #     enable = true;
+    # theme = "powerlevel10k";
+    #   };
+    # plugins = [
+    #   {
+    #     name = "powerlevel10k";
+    #     src = pkgs.zsh-powerlevel10k;
+    #     file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
+    #   }
+    #   {
+    #     name = "powerlevel10k-config";
+    #     src = ./p10k-config;
+    #     file = "p10k.zsh";
+    #   }
+    # ];
+    # };
 
     direnv.enable = true;
 
