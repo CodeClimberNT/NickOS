@@ -281,7 +281,8 @@ in
       gparted
       gvfs
       htop
-
+      hugo
+      
       jdk
       jdk8
       jdk17
@@ -305,6 +306,7 @@ in
       python311Packages.pip
       qemu
       remmina
+      spotify
       steam
       telegram-desktop
       thunderbird
@@ -318,8 +320,10 @@ in
       wget
       zsh
       zsh-powerlevel10k
+      
       # virtual manager
       virt-manager
+      swtpm
 
       # Unstable Channel
       unstable.vscode
