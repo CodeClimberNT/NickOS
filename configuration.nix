@@ -280,9 +280,9 @@ in
       gnome.gnome-software
       gparted
       gvfs
-      htop
+      btop
       hugo
-      
+
       jdk
       jdk8
       jdk17
@@ -320,7 +320,7 @@ in
       wget
       zsh
       zsh-powerlevel10k
-      
+
       # virtual manager
       virt-manager
       swtpm
@@ -350,8 +350,8 @@ in
     home.packages = with pkgs; [
       zsh
       zsh-powerlevel10k
-#       nerdfonts.override
-#       { fonts = [ "FiraCode" "DroidSansMono" ]; }
+      #       nerdfonts.override
+      #       { fonts = [ "FiraCode" "DroidSansMono" ]; }
     ];
 
 
