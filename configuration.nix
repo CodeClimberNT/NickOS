@@ -464,14 +464,22 @@ in
         { from = 1714; to = 1764; } # KDE Connect
       ];
     };
+
+    # Enable networking
+    networkmanager.enable = true;
+
     #   wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-    wireless.userControlled.enable = true;
+    wireless =
+      {
+        userControlled.enable = true;
+
+        networks = ./eduroam.nix;
+      };
     # Configure network proxy if necessary
     # proxy.default = "http://user:password@proxy:port/";
     # proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
-    # Enable networking
-    networkmanager.enable = true;
+
   };
 
 
