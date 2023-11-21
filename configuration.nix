@@ -232,7 +232,7 @@ in
     # shell = pkgs.zsh;
   };
 
-  # users.defaultUserShell = pkgs.zsh;
+  users.defaultUserShell = pkgs.zsh;
 
   # remember to run
   # flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
@@ -272,7 +272,6 @@ in
       authy
       autojump
       bat
-      # brave
       efibootmgr
       firefox
       flatpak
@@ -302,7 +301,7 @@ in
       neovim
       nixpkgs-fmt
       obs-studio
-      oh-my-zsh
+      # oh-my-zsh
       python311
       python311Packages.pip
       qemu
@@ -320,7 +319,7 @@ in
       xfce.thunar-volman
       wget
       zsh
-      zsh-powerlevel10k
+
       # Wine
       wineWowPackages.stable
       winetricks
@@ -356,32 +355,37 @@ in
 
     home.packages = with pkgs; [
       zsh
-      zsh-powerlevel10k
-      #       nerdfonts.override
-      #       { fonts = [ "FiraCode" "DroidSansMono" ]; }
+      (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" ]; })
     ];
 
 
 
     programs = {
-
       zsh = {
         enable = true;
+
+        # initExtra = ''
+        #   [[ ! -f ${./p10k.zsh} ]] || source ${./p10k.zsh}
+        # '';
+
+        plugins = [
+          {
+            name = "powerlevel10k";
+            src = pkgs.zsh-powerlevel10k;
+            file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
+          }
+          {
+            name = "powerlevel10k-config";
+            src = ./p10k-config;
+            file = "p10k.zsh";
+          }
+        ];
 
         shellAliases = {
           ll = "ls -l";
           update = "sudo nixos-rebuild switch";
         };
 
-        # histSize = 10000;
-        # histFile = "${config.xdg.dataHome}/zsh/history";
-
-        oh-my-zsh = {
-          enable = true;
-          plugins = [ "git" ];
-          # plugins = [ "git" "thefuck" ];
-          theme = "powerlevel10k";
-        };
       };
 
       git = {
@@ -415,30 +419,10 @@ in
       dedicatedServer.openFirewall = true;
     };
 
-    #     xwayland.enable = true;
+    # xwayland.enable = true;
+    
+    zsh.enable = true;
 
-    # zsh.enable = true;
-
-    # zsh = {
-    #   enable = true;
-
-    #   ohMyZsh = {
-    #     enable = true;
-    # theme = "powerlevel10k";
-    #   };
-    # plugins = [
-    #   {
-    #     name = "powerlevel10k";
-    #     src = pkgs.zsh-powerlevel10k;
-    #     file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
-    #   }
-    #   {
-    #     name = "powerlevel10k-config";
-    #     src = ./p10k-config;
-    #     file = "p10k.zsh";
-    #   }
-    # ];
-    # };
 
     direnv.enable = true;
 
