@@ -228,8 +228,6 @@ in
     mouse = {
       # disable accelertion
       accelProfile = "flat";
-      # disable middle button emulation
-      middleButton = false;
       # disable natural scrolling
       naturalScrolling = false;
     };
@@ -332,6 +330,7 @@ in
       xfce.thunar-archive-plugin
       xfce.thunar-volman
       wget
+      zip
       zsh
 
       # Wine
