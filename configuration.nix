@@ -234,7 +234,8 @@ in
 
   # users.defaultUserShell = pkgs.zsh;
 
-
+# remember to run
+# flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
   services.flatpak.enable = true;
 
   nixpkgs.config =
@@ -324,6 +325,7 @@ in
       # virtual manager
       virt-manager
       swtpm
+      OVMF
 
       # Unstable Channel
       unstable.vscode
