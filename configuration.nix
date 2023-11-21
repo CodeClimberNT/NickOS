@@ -45,9 +45,9 @@ in
   };
 
 
-  services.power-profiles-daemon.enable = false;
-  # boot.kernelPackages = pkgs.linuxPackages_latest;
   services = {
+    # disable power profiles
+    power-profiles-daemon.enable = false;
     tlp = {
       enable = true;
       settings = {
@@ -151,9 +151,7 @@ in
       driSupport = true;
       driSupport32Bit = true;
     };
-  };
 
-  hardware = {
     bluetooth.enable = true;
   };
 
@@ -189,9 +187,6 @@ in
       print-manager
     ];
 
-    # add the zsh package to /etc/shells 
-    # shells = with pkgs; [ zsh ];
-
     # enable for wayland
     # sessionVariables.NIXOS_OZONE_WL = "1";
   };
@@ -218,8 +213,27 @@ in
   };
 
   # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
+  services.xserver.libinput = {
+    enable = true;
 
+    touchpad = {
+      # disable accelertion
+      accelProfile = "flat";
+      # disable while typing
+      disableWhileTyping = true;
+      # enable natural scrolling
+      naturalScrolling = true;
+    };
+
+    mouse = {
+      # disable accelertion
+      accelProfile = "flat";
+      # disable middle button emulation
+      middleButton = false;
+      # disable natural scrolling
+      naturalScrolling = false;
+    };
+  };
 
   services.gvfs.enable = true;
 
@@ -420,7 +434,7 @@ in
     };
 
     # xwayland.enable = true;
-    
+
     zsh.enable = true;
 
 
@@ -434,12 +448,6 @@ in
     #   enableSSHSupport = true;
     # };
   };
-
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
 
 
   # Open ports in the firewall.
