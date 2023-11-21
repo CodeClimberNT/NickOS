@@ -234,8 +234,8 @@ in
 
   # users.defaultUserShell = pkgs.zsh;
 
-# remember to run
-# flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+  # remember to run
+  # flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
   services.flatpak.enable = true;
 
   nixpkgs.config =
@@ -321,6 +321,11 @@ in
       wget
       zsh
       zsh-powerlevel10k
+      # Wine
+      wineWowPackages.stable
+      winetricks
+      # for wayland unstable
+      # wineWowPackages.waylandFull
 
       # virtual manager
       virt-manager
