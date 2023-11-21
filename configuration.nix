@@ -377,11 +377,11 @@ in
         };
       };
 
-      # git = {
-      #   enable = true;
-      #   userName = "CodeClimberNT";
-      #   userEmail = "nicktaormina3@gmail.com";
-      # };
+      git = {
+        enable = true;
+        userName = "CodeClimberNT";
+        userEmail = "nicktaormina3@gmail.com";
+      };
     };
 
 
