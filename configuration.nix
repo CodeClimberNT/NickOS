@@ -240,7 +240,7 @@ in
   users.users.nick = {
     isNormalUser = true;
     description = "Nick";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "libvirtd" ];
     # shell = pkgs.zsh;
   };
 
@@ -304,8 +304,12 @@ in
       jetbrains-toolbox
 
       kitty
+
+      # KDE SUITS
       libsForQt5.kate
       libsForQt5.kdeconnect-kde
+      libsForQt5.libksysguard
+
       libreoffice-qt
       lutris
       lshw
@@ -314,7 +318,7 @@ in
       nixpkgs-fmt
       obs-studio
       # oh-my-zsh
-      python311
+      (python311.withPackages (ps: with ps; [ pandas ]))
       python311Packages.pip
       qemu
       remmina
@@ -343,6 +347,13 @@ in
       virt-manager
       swtpm
       OVMF
+      spice
+      spice-gtk
+      spice-protocol
+      virt-manager
+      virt-viewer
+      win-virtio
+      win-spice
 
       # Unstable Channel
       unstable.vscode
@@ -355,7 +366,20 @@ in
       nvidia-offload
     ];
 
-  virtualisation.libvirtd.enable = true;
+  # Enable virtual machines with qemu
+  virtualisation = {
+    libvirtd = {
+      enable = true;
+      qemu = {
+        package = pkgs.qemu_kvm;
+        swtpm.enable = true;
+        ovmf.enable = true;
+        ovmf.packages = [ pkgs.OVMFFull.fd ];
+      };
+    };
+    spiceUSBRedirection.enable = true;
+  };
+  services.spice-vdagentd.enable = true;
 
   # Home Manager example (insert non system package)
   home-manager.useGlobalPkgs = true;
@@ -448,6 +472,7 @@ in
     # };
   };
 
+  systemd.services.NetworkManager-wait-online.enable = true;
 
   # Open ports in the firewall.
   networking = {
@@ -462,21 +487,35 @@ in
         { from = 1714; to = 1764; } # KDE Connect
       ];
     };
+    # wireless.enable = true; # Enables wireless support via wpa_supplicant.
 
     # Enable networking
-    networkmanager.enable = true;
-
-    #   wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-    wireless =
+    networkmanager =
+      let
+        polito = import ./credentials/polito.nix;
+      in
       {
-        userControlled.enable = true;
+        enable = true;
 
-        networks = ./eduroam.nix;
+        # connections = [
+        #   {
+        #     name = "eduroam";
+        #     type = "802-11-wireless";
+        #     uuid = polito.uuid;
+        #     wireless.ssid = "eduroam";
+        #     wireless-security.key-mgmt = "WPA-EAP";
+        #     802-1x.eap = [ "PEAP" ];
+        #     802-1x.identity = polito.username;
+        #     802-1x.password = polito.password;
+        #   }
+        # ];
+
       };
+
+
     # Configure network proxy if necessary
     # proxy.default = "http://user:password@proxy:port/";
     # proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
 
   };
 
@@ -507,5 +546,7 @@ in
       dates = "weekly";
       options = "--delete-older-than 7d";
     };
+
+    settings.experimental-features = [ "nix-command" ];
   };
 }
