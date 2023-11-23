@@ -429,6 +429,8 @@ in
         enable = true;
         userName = "CodeClimberNT";
         userEmail = "nicktaormina3@gmail.com";
+        # global attributes
+        attributes = [ "http.postBuffer 1048576000" ];
       };
     };
 
