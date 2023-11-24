@@ -155,25 +155,55 @@ in
     bluetooth.enable = true;
   };
 
-  services.xserver = {
-    enable = true;
+  services = {
+    xserver = {
+      enable = true;
 
-    layout = "us,it";
-    xkbVariant = "";
+      layout = "us,it";
+      xkbVariant = "";
 
-    videoDrivers = [ "nvidia" ];
+      videoDrivers = [ "nvidia" ];
 
-    # Enable Plasma5 Desktop Environment
-    desktopManager = {
-      plasma5.enable = true;
+      # Enable Plasma5 Desktop Environment
+      desktopManager = {
+        plasma5.enable = true;
+      };
+
+      displayManager = {
+        sddm.enable = true;
+        sddm.autoNumlock = true;
+        defaultSession = "plasma";
+      };
+
+      # Enable touchpad support (enabled default in most desktopManager).
+      libinput = {
+        enable = true;
+
+        touchpad = {
+          # disable accelertion
+          accelProfile = "flat";
+          # disable while typing
+          disableWhileTyping = true;
+          # enable natural scrolling
+          naturalScrolling = true;
+        };
+
+        mouse = {
+          # disable accelertion
+          accelProfile = "flat";
+          # disable natural scrolling
+          naturalScrolling = false;
+        };
+      };
     };
 
-    displayManager = {
-      sddm.enable = true;
-      sddm.autoNumlock = true;
-      defaultSession = "plasma";
+    xrdp = {
+      enable = true;
+      defaultWindowManager = "startplasma-x11";
+      openFirewall = true;
     };
   };
+
 
   environment = {
     plasma5.excludePackages = with pkgs.libsForQt5; [
@@ -212,26 +242,8 @@ in
     #media-session.enable = true;
   };
 
-  # Enable touchpad support (enabled default in most desktopManager).
-  services.xserver.libinput = {
-    enable = true;
 
-    touchpad = {
-      # disable accelertion
-      accelProfile = "flat";
-      # disable while typing
-      disableWhileTyping = true;
-      # enable natural scrolling
-      naturalScrolling = true;
-    };
 
-    mouse = {
-      # disable accelertion
-      accelProfile = "flat";
-      # disable natural scrolling
-      naturalScrolling = false;
-    };
-  };
 
   services.gvfs.enable = true;
 
@@ -334,6 +346,7 @@ in
       xfce.thunar-archive-plugin
       xfce.thunar-volman
       wget
+      wireguard-tools
       zip
       zsh
 
