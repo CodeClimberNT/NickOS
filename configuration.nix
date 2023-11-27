@@ -42,6 +42,7 @@ in
 
       };
     };
+    supportedFilesystems = [ "ntfs" ];
   };
 
 
@@ -172,7 +173,6 @@ in
       displayManager = {
         sddm.enable = true;
         sddm.autoNumlock = true;
-        defaultSession = "plasma";
       };
 
       # Enable touchpad support (enabled default in most desktopManager).
@@ -196,12 +196,12 @@ in
         };
       };
     };
-
-    xrdp = {
-      enable = true;
-      defaultWindowManager = "startplasma-x11";
-      openFirewall = true;
-    };
+    # enable xrdp
+    # xrdp = {
+    #   enable = true;
+    #   defaultWindowManager = "startplasma-x11";
+    #   openFirewall = true;
+    # };
   };
 
 
@@ -219,6 +219,10 @@ in
 
     # enable for wayland
     # sessionVariables.NIXOS_OZONE_WL = "1";
+
+    variables = {
+      JAVA_HOME = "${pkgs.jdk11.home}/lib/openjdk;";
+    };
   };
 
   # Enable CUPS to print documents.
@@ -256,7 +260,7 @@ in
     # shell = pkgs.zsh;
   };
 
-  users.defaultUserShell = pkgs.zsh;
+  # users.defaultUserShell = pkgs.zsh;
 
   # remember to run
   # flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
@@ -309,6 +313,7 @@ in
 
       jdk
       jdk8
+      jdk11
       jdk17
 
       jetbrains.jdk
@@ -325,13 +330,17 @@ in
       libreoffice-qt
       lutris
       lshw
+
+      maven
+
       neofetch
       neovim
       nixpkgs-fmt
       obs-studio
-      # oh-my-zsh
+
       (python311.withPackages (ps: with ps; [ pandas ]))
       python311Packages.pip
+
       qemu
       remmina
       spotify
@@ -342,9 +351,13 @@ in
       toybox
       trashy
       vim
+
       xfce.thunar
       xfce.thunar-archive-plugin
+      xfce.thunar-dropbox-plugin
+      xfce.thunar-media-tags-plugin
       xfce.thunar-volman
+
       wget
       wireguard-tools
       zip
@@ -462,6 +475,8 @@ in
       enable = true;
     };
 
+    java.enable = true;
+
     steam = {
       enable = true;
       # Open ports in the firewall for Steam Remote Play
@@ -473,7 +488,7 @@ in
 
     # xwayland.enable = true;
 
-    zsh.enable = true;
+    # zsh.enable = true;
 
 
     direnv.enable = true;
@@ -495,6 +510,10 @@ in
 
     firewall = {
       enable = true;
+      # open port for remote deskptop
+      # allowedTCPPorts = [ 3389 ];
+      # allowedUDPPorts = [ 3389 ];
+
       allowedTCPPortRanges = [
         { from = 1714; to = 1764; } # KDE Connect
       ];
