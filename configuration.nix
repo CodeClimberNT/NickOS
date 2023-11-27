@@ -165,14 +165,28 @@ in
 
       videoDrivers = [ "nvidia" ];
 
-      # Enable Plasma5 Desktop Environment
-      desktopManager = {
-        plasma5.enable = true;
+      windowManager = {
+        dwm = {
+          enable = true;
+          package = pkgs.dwm.override {
+            patches = [
+              # # for local patch files, replace with relative path to patch file
+              # ./path/to/local.patch
+              # # for external patches
+              # (pkgs.fetchpatch {
+              #   # replace with actual URL
+              #   url = "https://dwm.suckless.org/patches/path/to/patch.diff";
+              #   # replace hash with the value from `nix-prefetch-url "https://dwm.suckless.org/patches/path/to/patch.diff" | xargs nix hash to-sri --type sha256`
+              #   # or just leave it blank, rebuild, and use the hash value from the error
+              #   hash = "";
+              # })
+            ];
+          };
+        };
       };
 
       displayManager = {
-        sddm.enable = true;
-        sddm.autoNumlock = true;
+        lightdm.enable = true;
       };
 
       # Enable touchpad support (enabled default in most desktopManager).
@@ -196,33 +210,30 @@ in
         };
       };
     };
-    # enable xrdp
-    # xrdp = {
-    #   enable = true;
-    #   defaultWindowManager = "startplasma-x11";
-    #   openFirewall = true;
-    # };
+    picom.enable = true;
   };
 
 
   environment = {
-    plasma5.excludePackages = with pkgs.libsForQt5; [
-      elisa
-      gwenview
-      okular
-      oxygen
-      khelpcenter
-      konsole
-      plasma-browser-integration
-      print-manager
-    ];
+    # Not needed for dwm
+    # plasma5.excludePackages = with pkgs.libsForQt5; [
+    #   elisa
+    #   gwenview
+    #   okular
+    #   oxygen
+    #   khelpcenter
+    #   konsole
+    #   plasma-browser-integration
+    #   print-manager
+    # ];
 
     # enable for wayland
     # sessionVariables.NIXOS_OZONE_WL = "1";
 
     variables = {
-      JAVA_HOME = "${pkgs.jdk11.home}/lib/openjdk;";
+      JAVA_HOME = "${pkgs.jdk11.home}/lib/openjdk";
     };
+
   };
 
   # Enable CUPS to print documents.
@@ -256,11 +267,11 @@ in
   users.users.nick = {
     isNormalUser = true;
     description = "Nick";
-    extraGroups = [ "networkmanager" "wheel" "libvirtd" ];
-    # shell = pkgs.zsh;
+    extraGroups = [ "networkmanager" "wheel" "kvm" "input" "disk" "libvirtd" ];
   };
 
-  # users.defaultUserShell = pkgs.zsh;
+
+
 
   # remember to run
   # flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
@@ -300,6 +311,7 @@ in
       authy
       autojump
       bat
+      dwm
       efibootmgr
       firefox
       flatpak
@@ -311,10 +323,10 @@ in
       btop
       hugo
 
-      jdk
-      jdk8
+      # jdk
+      # jdk8
       jdk11
-      jdk17
+      # jdk17
 
       jetbrains.jdk
 
@@ -328,9 +340,15 @@ in
       libsForQt5.libksysguard
 
       libreoffice-qt
-      lutris
+      (lutris.override {
+        extraPkgs = pkgs: [
+          # List package dependencies here
+          wineWowPackages.stable
+          winetricks
+        ];
+      })
       lshw
-
+      mangohud
       maven
 
       neofetch
@@ -338,11 +356,19 @@ in
       nixpkgs-fmt
       obs-studio
 
+      picom
+      polkit_gnome
+
+      protonup-qt
+      protonup-ng
+      protontricks
+
       (python311.withPackages (ps: with ps; [ pandas ]))
       python311Packages.pip
 
       qemu
       remmina
+      rofi
       spotify
       steam
       telegram-desktop
@@ -352,16 +378,25 @@ in
       trashy
       vim
 
+      xdg-desktop-portal-gtk
+
       xfce.thunar
       xfce.thunar-archive-plugin
       xfce.thunar-dropbox-plugin
       xfce.thunar-media-tags-plugin
       xfce.thunar-volman
 
+      xorg.libX11
+      xorg.libX11.dev
+      xorg.libxcb
+      xorg.libXft
+      xorg.libXinerama
+      xorg.xinit
+      xorg.xinput
+
       wget
       wireguard-tools
       zip
-      zsh
 
       # Wine
       wineWowPackages.stable
@@ -407,49 +442,42 @@ in
   };
   services.spice-vdagentd.enable = true;
 
+
+  fonts = {
+    fonts = with pkgs; [
+      noto-fonts
+      noto-fonts-cjk
+      noto-fonts-emoji
+      font-awesome
+      source-han-sans
+      source-han-sans-japanese
+      source-han-serif-japanese
+      (nerdfonts.override { fonts = [ "Meslo" "FiraCode" "DroidSansMono" ]; })
+    ];
+    fontconfig = {
+      enable = true;
+      defaultFonts = {
+        monospace = [ "Meslo LG M Regular Nerd Font Complete Mono" ];
+        serif = [ "Noto Serif" "Source Han Serif" ];
+        sansSerif = [ "Noto Sans" "Source Han Sans" ];
+      };
+    };
+  };
+
+
   # Home Manager example (insert non system package)
   home-manager.useGlobalPkgs = true;
 
   home-manager.users.nick = { lib, pkgs, ... }: {
-
-    fonts.fontconfig.enable = true;
-
     home.stateVersion = "23.05";
 
     home.packages = with pkgs; [
-      zsh
-      (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" ]; })
+      # (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" ]; })
     ];
 
 
 
     programs = {
-      zsh = {
-        enable = true;
-
-        # initExtra = ''
-        #   [[ ! -f ${./p10k.zsh} ]] || source ${./p10k.zsh}
-        # '';
-
-        plugins = [
-          {
-            name = "powerlevel10k";
-            src = pkgs.zsh-powerlevel10k;
-            file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
-          }
-          {
-            name = "powerlevel10k-config";
-            src = ./p10k-config;
-            file = "p10k.zsh";
-          }
-        ];
-
-        shellAliases = {
-          ll = "ls -l";
-          update = "sudo nixos-rebuild switch";
-        };
-
-      };
 
       git = {
         enable = true;
@@ -471,6 +499,13 @@ in
   };
 
   programs = {
+    bash.shellAliases = {
+      l = "ls -alh";
+      ll = "ls -l";
+      ls = "ls --color=tty";
+      update = "sudo nixos-rebuild switch";
+    };
+
     dconf = {
       enable = true;
     };
@@ -488,7 +523,6 @@ in
 
     # xwayland.enable = true;
 
-    # zsh.enable = true;
 
 
     direnv.enable = true;
@@ -502,7 +536,28 @@ in
     # };
   };
 
-  systemd.services.NetworkManager-wait-online.enable = true;
+  services.dbus.enable = true;
+  security.polkit.enable = true;
+  systemd = {
+    services.NetworkManager-wait-online.enable = true;
+    user.services.polkit-gnome-authentication-agent-1 = {
+      description = "polkit-gnome-authentication-agent-1";
+      wantedBy = [ "graphical-session.target" ];
+      wants = [ "graphical-session.target" ];
+      after = [ "graphical-session.target" ];
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+        Restart = "on-failure";
+        RestartSec = 1;
+        TimeoutStopSec = 10;
+      };
+    };
+    extraConfig = ''
+      DefaultTimeoutStopSec=10s
+    '';
+  };
+
 
   # Open ports in the firewall.
   networking = {
@@ -582,5 +637,10 @@ in
     };
 
     settings.experimental-features = [ "nix-command" ];
+  };
+
+  xdg.portal = {
+    enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
   };
 }
