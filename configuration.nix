@@ -257,10 +257,8 @@ in
     isNormalUser = true;
     description = "Nick";
     extraGroups = [ "networkmanager" "wheel" "libvirtd" ];
-    # shell = pkgs.zsh;
   };
 
-  # users.defaultUserShell = pkgs.zsh;
 
   # remember to run
   # flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
@@ -361,7 +359,6 @@ in
       wget
       wireguard-tools
       zip
-      zsh
 
       # Wine
       wineWowPackages.stable
@@ -417,40 +414,12 @@ in
     home.stateVersion = "23.05";
 
     home.packages = with pkgs; [
-      zsh
       (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" ]; })
     ];
 
 
 
     programs = {
-      zsh = {
-        enable = true;
-
-        # initExtra = ''
-        #   [[ ! -f ${./p10k.zsh} ]] || source ${./p10k.zsh}
-        # '';
-
-        plugins = [
-          {
-            name = "powerlevel10k";
-            src = pkgs.zsh-powerlevel10k;
-            file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
-          }
-          {
-            name = "powerlevel10k-config";
-            src = ./p10k-config;
-            file = "p10k.zsh";
-          }
-        ];
-
-        shellAliases = {
-          ll = "ls -l";
-          update = "sudo nixos-rebuild switch";
-        };
-
-      };
-
       git = {
         enable = true;
         userName = "CodeClimberNT";
@@ -471,6 +440,12 @@ in
   };
 
   programs = {
+    bash.shellAliases = {
+      l = "ls -alh";
+      ll = "ls -l";
+      ls = "ls --color=tty";
+      update = "sudo nixos-rebuild switch";
+    };
     dconf = {
       enable = true;
     };
@@ -488,7 +463,6 @@ in
 
     # xwayland.enable = true;
 
-    # zsh.enable = true;
 
 
     direnv.enable = true;
