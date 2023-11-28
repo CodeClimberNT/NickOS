@@ -21,11 +21,9 @@ in
 
   # Bootloader.
   boot = {
-    extraModulePackages = [ pkgs.linuxPackages.nvidia_x11 ];
     # blacklistedKernelModules = [ "nouveau" "nvidia_drm" "nvidia_modeset" "nvidia" ];
 
-    initrd.kernelModules = [ "i915" ];
-
+    # kernelPackages = linuxPackages_latest;
     loader = {
       efi = {
         canTouchEfiVariables = true;
@@ -146,7 +144,7 @@ in
       nvidiaSettings = true;
 
       # Optionally, you may need to select the appropriate driver version for your specific GPU.
-      package = config.boot.kernelPackages.nvidiaPackages.stable;
+      package = config.boot.kernelPackages.nvidiaPackages.production;
     };
 
     opengl = {
@@ -212,7 +210,9 @@ in
       konsole
       plasma-browser-integration
       print-manager
-      # konsole
+
+      konsole
+      dolphin
     ];
 
     # enable for wayland
@@ -287,7 +287,6 @@ in
         export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
         export __GLX_VENDOR_LIBRARY_NAME=nvidia
         export __VK_LAYER_NV_optimus=NVIDIA_only
-
         exec "$@"
       '';
     in
@@ -302,6 +301,7 @@ in
       flatpak
       gh
       git
+      glxinfo
       gnome.gnome-software
       gparted
       gvfs
@@ -443,10 +443,10 @@ in
 
   programs = {
     bash = {
-      interactiveShellInit = "neofetch";
+      interactiveShellInit = "";
 
       shellAliases = {
-        cat = "bat --style=plain";
+        cat = "bat";
         cl = "clear";
         l = "ls -alh";
         ll = "ls -l";
