@@ -498,28 +498,7 @@ in
     # wireless.enable = true; # Enables wireless support via wpa_supplicant.
 
     # Enable networking
-    networkmanager =
-      let
-        polito = import ./credentials/polito.nix;
-      in
-      {
-        enable = true;
-
-        # connections = [
-        #   {
-        #     name = "eduroam";
-        #     type = "802-11-wireless";
-        #     uuid = polito.uuid;
-        #     wireless.ssid = "eduroam";
-        #     wireless-security.key-mgmt = "WPA-EAP";
-        #     802-1x.eap = [ "PEAP" ];
-        #     802-1x.identity = polito.username;
-        #     802-1x.password = polito.password;
-        #   }
-        # ];
-
-      };
-
+    networkmanager.enable = true;
 
     # Configure network proxy if necessary
     # proxy.default = "http://user:password@proxy:port/";
