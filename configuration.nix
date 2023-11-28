@@ -348,6 +348,7 @@ in
       tldr
       toybox
       trashy
+      ventoy-full
       vim
 
       xfce.thunar
