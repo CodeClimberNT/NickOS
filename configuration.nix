@@ -109,8 +109,9 @@ in
     LC_TIME = "it_IT.UTF-8";
   };
 
-  # hardware for nvidia
+  # hardware settings
   hardware = {
+    cpu.intel.updateMicrocode = true;
     nvidia = {
       prime = {
         offload = {
@@ -126,7 +127,7 @@ in
       modesetting.enable = true;
 
       # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
-      powerManagement.enable = false;
+      powerManagement.enable = true;
       # Fine-grained power management. Turns off GPU when not in use.
       # Experimental and only works on modern Nvidia GPUs (Turing or newer).
       powerManagement.finegrained = false;
@@ -145,7 +146,7 @@ in
       nvidiaSettings = true;
 
       # Optionally, you may need to select the appropriate driver version for your specific GPU.
-      package = config.boot.kernelPackages.nvidiaPackages.production;
+      package = config.boot.kernelPackages.nvidiaPackages.stable;
     };
 
     opengl = {
@@ -174,6 +175,7 @@ in
       displayManager = {
         sddm.enable = true;
         sddm.autoNumlock = true;
+        defaultSession = "plasma5";
       };
 
       # Enable touchpad support (enabled default in most desktopManager).
@@ -210,6 +212,7 @@ in
       konsole
       plasma-browser-integration
       print-manager
+      # konsole
     ];
 
     # enable for wayland
@@ -293,6 +296,7 @@ in
       authy
       autojump
       bat
+      dropbox
       efibootmgr
       firefox
       flatpak
@@ -304,10 +308,10 @@ in
       btop
       hugo
 
-      jdk
-      jdk8
+      # jdk
+      # jdk8
       jdk11
-      jdk17
+      # jdk17
 
       jetbrains.jdk
 
@@ -336,6 +340,7 @@ in
 
       qemu
       remmina
+      retroarch
       spotify
       steam
       telegram-desktop
@@ -356,6 +361,7 @@ in
       zip
 
       # Wine
+      wine
       wineWowPackages.stable
       winetricks
       # for wayland unstable
@@ -399,49 +405,54 @@ in
   };
   services.spice-vdagentd.enable = true;
 
-  # Home Manager example (insert non system package)
-  home-manager.useGlobalPkgs = true;
+  # Home Manager configuration
+  home-manager = {
+    useGlobalPkgs = true;
 
-  home-manager.users.nick = { lib, pkgs, ... }: {
+    users.nick = { lib, pkgs, ... }: {
+      fonts.fontconfig.enable = true;
 
-    fonts.fontconfig.enable = true;
+      home.stateVersion = "23.05";
 
-    home.stateVersion = "23.05";
+      home.packages = with pkgs; [
+        (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" ]; })
+      ];
 
-    home.packages = with pkgs; [
-      (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" ]; })
-    ];
-
-
-
-    programs = {
-      git = {
-        enable = true;
-        userName = "CodeClimberNT";
-        userEmail = "nicktaormina3@gmail.com";
-        # global attributes
-        attributes = [ "http.postBuffer 1048576000" ];
+      shellAliases = {
+        cat = "bat --style=plain";
+        cl = "clear";
+        l = "ls -alh";
+        ll = "ls -l";
+        ls = "ls --color=tty";
+        update = "sudo nixos-rebuild switch";
       };
-    };
 
-
-    dconf.settings = {
-      "org/virt-manager/virt-manager/connections" = {
-        autoconnect = [ "qemu:///system" ];
-        uris = [ "qemu:///system" ];
+      programs = {
+        git = {
+          enable = true;
+          userName = "CodeClimberNT";
+          userEmail = "nicktaormina3@gmail.com";
+          # global attributes
+          attributes = [ "http.postBuffer 1048576000" ];
+        };
       };
-    };
 
+
+      dconf.settings = {
+        "org/virt-manager/virt-manager/connections" = {
+          autoconnect = [ "qemu:///system" ];
+          uris = [ "qemu:///system" ];
+        };
+      };
+
+    };
   };
 
   programs = {
-    bash.shellAliases = {
-      cat = "bat";
-      cl = "clear";
-      l = "ls -alh";
-      ll = "ls -l";
-      ls = "ls --color=tty";
-      update = "sudo nixos-rebuild switch";
+    bash = {
+      interactiveShellInit = "neofetch";
+
+
     };
 
     dconf = {
