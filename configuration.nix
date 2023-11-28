@@ -85,6 +85,7 @@ in
     auto-cpufreq = {
       enable = true;
     };
+    services.fstrim.enable = true;
   };
 
 
@@ -196,12 +197,6 @@ in
         };
       };
     };
-    # enable xrdp
-    # xrdp = {
-    #   enable = true;
-    #   defaultWindowManager = "startplasma-x11";
-    #   openFirewall = true;
-    # };
   };
 
 
@@ -441,11 +436,14 @@ in
 
   programs = {
     bash.shellAliases = {
+      cat = "bat";
+      cl = "clear";
       l = "ls -alh";
       ll = "ls -l";
       ls = "ls --color=tty";
       update = "sudo nixos-rebuild switch";
     };
+
     dconf = {
       enable = true;
     };
@@ -531,7 +529,7 @@ in
     gc = {
       automatic = true;
       dates = "weekly";
-      options = "--delete-older-than 7d";
+      options = "--delete-older-than 1w";
     };
 
     settings.experimental-features = [ "nix-command" ];
