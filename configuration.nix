@@ -85,7 +85,7 @@ in
     auto-cpufreq = {
       enable = true;
     };
-    services.fstrim.enable = true;
+    fstrim.enable = true;
   };
 
 
@@ -175,7 +175,7 @@ in
       displayManager = {
         sddm.enable = true;
         sddm.autoNumlock = true;
-        defaultSession = "plasma5";
+        defaultSession = "plasma";
       };
 
       # Enable touchpad support (enabled default in most desktopManager).
@@ -418,14 +418,7 @@ in
         (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" ]; })
       ];
 
-      shellAliases = {
-        cat = "bat --style=plain";
-        cl = "clear";
-        l = "ls -alh";
-        ll = "ls -l";
-        ls = "ls --color=tty";
-        update = "sudo nixos-rebuild switch";
-      };
+
 
       programs = {
         git = {
@@ -452,6 +445,14 @@ in
     bash = {
       interactiveShellInit = "neofetch";
 
+      shellAliases = {
+        cat = "bat --style=plain";
+        cl = "clear";
+        l = "ls -alh";
+        ll = "ls -l";
+        ls = "ls --color=tty";
+        update = "sudo nixos-rebuild switch";
+      };
 
     };
 
