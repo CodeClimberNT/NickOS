@@ -1,4 +1,4 @@
-# NixOS-nick
+# NickOS
 
 ### First installation of NixOS 
 
